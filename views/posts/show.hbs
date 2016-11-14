@@ -13,7 +13,6 @@
       <a class="navbar-brand" href="/">Izel Nakri | Blog</a>
 
       <div class="nav navbar-nav float-xs-right">
-        <a class="nav-item nav-link active" href="/admin/posts">Admin Panel</a>
         <a class="nav-item nav-link active" href="/admin/posts/new">Add Blog Post</a>
       </div>
     </nav>
@@ -21,20 +20,10 @@
     <section class="container">
         <div class="row">
           <div class="col-xs-8">
-            {{#if blogPosts}}
-              {{#each blogPosts as |blogPost|}}
-                <div class="card card-block">
-                  <h3><a href="/{{blogPost.slug}}">{{blogPost.title}}</a></h3>
-                  {{{blogPost.content}}}
-                </div>
-              {{/each}}
-            {{else}}
-              <div class="card card-block">
-                <p>
-                  No blog posts found
-                </p>
-              </div>
-            {{/if}}
+            <div class="card card-block">
+              <h1>{{post.title}}</h1>
+              {{{post.content}}}
+            </div>
           </div>
 
           <div class="col-xs-4">

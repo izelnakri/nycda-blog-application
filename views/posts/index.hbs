@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" integrity="sha384-AysaV+vQoT3kOAXZkl02PThvDr8HYKPZhNT5h/CXfBThSRXQ6jW5DO2ekP5ViFdi" crossorigin="anonymous">
+    <title>NYCDA Blog Application</title>
+  </head>
+
+  <body>
+    <nav class="navbar navbar-light bg-faded">
+      <a class="navbar-brand" href="/">Izel Nakri | Blog</a>
+
+      <div class="nav navbar-nav float-xs-right">
+        <a class="nav-item nav-link active" href="/admin/posts">Admin Panel</a>
+        <a class="nav-item nav-link active" href="/admin/posts/new">Add Blog Post</a>
+      </div>
+    </nav>
+
+    <section class="container">
+      {{#if blogPosts}}
+        {{#each blogPosts as |blogPost|}}
+          <div class="card card-block">
+            <div class="row">
+              <div class="col-xs-8">
+                <h2>{{blogPost.title}}</h2>
+              </div>
+              <div class="col-xs-2 text-xs-right">
+                <a href="/posts/{{blogPost.id}}/edit" class="btn btn-warning">Edit Post</a>
+              </div>
+              <div class="col-xs-2 text-xs-right">
+                <form action="/posts/{{blogPost.id}}" method="POST">
+                  <input type="hidden" name="_method" value="DELETE" />
+                  <button type="submit" class="btn btn-danger">Remove Post</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        {{/each}}
+      {{else}}
+        <div class="card card-block">
+          <p>
+            No blog posts yet.
+          </p>
+        </div>
+      {{/if}}
+    </section>
+  </body>
+</html>
