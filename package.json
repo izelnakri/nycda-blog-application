@@ -1,0 +1,12 @@
+{
+  "name": "nycda-blog-application",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.14.0",
+    "hbs": "^4.0.1",
+    "method-override": "^2.3.6",
+    "morgan": "^1.7.0"
+  }
+}
