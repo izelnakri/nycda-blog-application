@@ -27,7 +27,7 @@ app.use(methodOverride(function (req, res) {
 app.use('/admin', adminRouter);
 
 app.get('/', (req, res) => {
-  db.Post.findAll().then((blogPosts) => {
+  db.Post.findAll({ order: [['createdAt', 'DESC']] }).then((blogPosts) => {
     res.render('index', { blogPosts: blogPosts });
   });
 });
