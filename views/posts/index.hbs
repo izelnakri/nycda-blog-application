@@ -9,7 +9,7 @@
           <a href="/admin/posts/{{blogPost.id}}/edit" class="btn btn-warning">Edit Post</a>
         </div>
         <div class="col-xs-2 text-xs-right">
-          <form action="/posts/{{blogPost.id}}" method="POST">
+          <form action="/admin/posts/{{blogPost.id}}" method="POST">
             <input type="hidden" name="_method" value="DELETE" />
             <button type="submit" class="btn btn-danger">Remove Post</button>
           </form>

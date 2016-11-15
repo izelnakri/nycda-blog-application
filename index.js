@@ -7,6 +7,8 @@ var db = require('./models');
 
 var app = express();
 
+var adminRouter = require('./routes/admin');
+
 app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
@@ -21,6 +23,8 @@ app.use(methodOverride(function (req, res) {
     return method;
   }
 }));
+
+app.use('/admin', adminRouter);
 
 app.get('/', (req, res) => {
   db.Post.findAll().then((blogPosts) => {
@@ -39,55 +43,6 @@ app.get('/:slug', (req, res) => {
     res.status(404).end();
   });
 });
-
-app.get('/admin/posts', (req, res) => {
-  db.Post.findAll().then((blogPosts) => {
-    res.render('posts/index', { blogPosts: blogPosts });
-  }).catch((error) => {
-    throw error;
-  });
-});
-
-app.get('/admin/posts/new', (req, res) => {
-  res.render('posts/new');
-});
-
-app.get('/admin/posts/:id/edit', (req, res) => {
-  db.Post.findOne({
-    where: {
-      id: req.params.id
-    }
-  }).then((post) => {
-    res.render('posts/edit', { post: post });
-  });
-});
-
-app.post('/posts', (req, res) => {
-  db.Post.create(req.body).then((post) => {
-    res.redirect('/' + post.slug);
-  });
-});
-
-app.put('/posts/:id', (req, res) => {
-  db.Post.update(req.body, {
-    where: {
-      id: req.params.id
-    }
-  }).then(() => {
-    res.redirect('/admin/posts');
-  });
-});
-
-app.delete('/posts/:id', (req, res) => {
-  db.Post.destroy({
-    where: {
-      id: req.params.id
-    }
-  }).then(() => {
-    res.redirect('/admin/posts');
-  });
-});
-
 
 db.sequelize.sync().then(() => {
   app.listen(3000, () => {
