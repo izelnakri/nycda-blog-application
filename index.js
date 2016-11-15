@@ -22,7 +22,6 @@ app.use(methodOverride(function (req, res) {
   }
 }));
 
-
 app.get('/', (req, res) => {
   db.Post.findAll().then((blogPosts) => {
     res.render('index', { blogPosts: blogPosts });
@@ -64,11 +63,8 @@ app.get('/admin/posts/:id/edit', (req, res) => {
 });
 
 app.post('/posts', (req, res) => {
-  console.log(req.body);
   db.Post.create(req.body).then((post) => {
     res.redirect('/' + post.slug);
-  }).catch((error) => {
-    throw error;
   });
 });
 
