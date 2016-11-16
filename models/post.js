@@ -1,3 +1,5 @@
+var slug = require('slug');
+
 'use strict';
 module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define('Post', {
@@ -5,6 +7,13 @@ module.exports = function(sequelize, DataTypes) {
     slug: DataTypes.STRING,
     content: DataTypes.TEXT
   }, {
+    hooks: {
+      beforeCreate: function(post, options) {
+        if (!post.slug) {
+          post.slug = slug(post.title, { lower: true });
+        }
+      }
+    },
     classMethods: {
       associate: function(models) {
         // associations can be defined here
