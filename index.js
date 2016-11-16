@@ -26,8 +26,16 @@ app.use(methodOverride(function (req, res) {
 
 app.use('/admin', adminRouter);
 
+app.post('/comments', (req, res) => {
+  db.Comment.create(req.body).then((comment) => {
+    return comment.getPost().then((post) => {
+      res.redirect('/' + post.slug);
+    });
+  });
+});
+
 app.get('/', (req, res) => {
-  db.Post.findAll().then((blogPosts) => {
+  db.Post.findAll({ order: [['createdAt', 'DESC']] }).then((blogPosts) => {
     res.render('index', { blogPosts: blogPosts });
   });
 });
@@ -38,7 +46,9 @@ app.get('/:slug', (req, res) => {
       slug: req.params.slug
     }
   }).then((post) => {
-    res.render('posts/show', { post: post });
+    return post.getComments().then((comments) => {
+      res.render('posts/show', { post: post, comments: comments });
+    });
   }).catch((error) => {
     res.status(404).end();
   });
