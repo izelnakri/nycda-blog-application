@@ -12,11 +12,10 @@
         </p>
       </div>
     {{/each}}
-    
+
     <h5>Add a comment:</h5>
 
-    <form action="/comments" method="POST">
-      <input type="hidden" name="PostId" value={{post.id}} />
+    <form action="/posts/{{post.id}}/comments" method="POST">
       <div class="form-group">
         <textarea rows="5" class="form-control" name="content"></textarea>
       </div>

@@ -26,9 +26,12 @@ app.use(methodOverride(function (req, res) {
 
 app.use('/admin', adminRouter);
 
-app.post('/comments', (req, res) => {
-  db.Comment.create(req.body).then((comment) => {
-    return comment.getPost().then((post) => {
+app.post('/posts/:id/comments', (req, res) => {
+  db.Post.findById(req.params.id).then((post) => {
+    var comment = req.body;
+    comment.PostId = post.id;
+
+    db.Comment.create(comment).then(() => {
       res.redirect('/' + post.slug);
     });
   });
