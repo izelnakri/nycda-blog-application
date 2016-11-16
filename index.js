@@ -27,11 +27,8 @@ app.use(methodOverride(function (req, res) {
 app.use('/admin', adminRouter);
 
 app.post('/comments', (req, res) => {
-  console.log(req.body);
-
   db.Comment.create(req.body).then((comment) => {
-    console.log('comment is created:');
-    comment.getPost().then((post) => {
+    return comment.getPost().then((post) => {
       res.redirect('/' + post.slug);
     });
   });
@@ -50,7 +47,6 @@ app.get('/:slug', (req, res) => {
     }
   }).then((post) => {
     return post.getComments().then((comments) => {
-      console.log(comments);
       res.render('posts/show', { post: post, comments: comments });
     });
   }).catch((error) => {
