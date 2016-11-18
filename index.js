@@ -2,6 +2,7 @@ const express = require('express'),
       bodyParser = require('body-parser'),
       methodOverride = require('method-override'),
       session = require('express-session'),
+      displayRoutes = require('express-routemap'),
       logger = require('morgan');
 
 var db = require('./models');
@@ -14,7 +15,12 @@ app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
 
-app.use(session({ secret: 'our secret key' }));
+app.use(session({
+  name: 'izels-session-cookie',
+  secret: 'our secret key',
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -43,16 +49,20 @@ app.post('/posts/:id/comments', (req, res) => {
 app.get('/', (req, res) => {
   console.log(req.session);
   db.Post.findAll({ order: [['createdAt', 'DESC']] }).then((blogPosts) => {
-    res.render('index', { blogPosts: blogPosts });
+    res.render('index', { blogPosts: blogPosts, user: req.session.user });
   });
 });
 
 app.get('/register', (req, res) => {
+  if (req.session.user) {
+    res.redirect('/admin/posts');
+  }
+
   res.render('users/new');
 });
 
 app.get('/login', (req, res) => {
-  res.render('login');
+  res.redirect('/admin');
 });
 
 app.post('/login', (req, res) => {
@@ -94,7 +104,7 @@ app.get('/:slug', (req, res) => {
     }
   }).then((post) => {
     return post.getComments().then((comments) => {
-      res.render('posts/show', { post: post, comments: comments });
+      res.render('posts/show', { post: post, comments: comments, user: req.session.user });
     });
   }).catch((error) => {
     res.status(404).end();
@@ -104,5 +114,6 @@ app.get('/:slug', (req, res) => {
 db.sequelize.sync().then(() => {
   app.listen(3000, () => {
     console.log('Web server started at port 3000!');
+    displayRoutes(app);
   });
 });

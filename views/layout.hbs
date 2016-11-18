@@ -12,10 +12,13 @@
     <nav class="navbar navbar-light bg-faded">
       <a class="navbar-brand" href="/">Izel Nakri | Blog</a>
 
-      <div class="nav navbar-nav float-xs-right">
-        <a class="nav-item nav-link active" href="/admin/posts">Admin Panel</a>
-        <a class="nav-item nav-link active" href="/admin/posts/new">Add Blog Post</a>
-      </div>
+      {{#if user}}
+        <div class="nav navbar-nav float-xs-right">
+          <a class="nav-item nav-link active" href="/admin/posts">Admin Panel</a>
+          <a class="nav-item nav-link active" href="/admin/posts/new">Add Blog Post</a>
+          <a class="nav-item nav-link active" href="/logout">LOGOUT</a>
+        </div>
+      {{/if}}
     </nav>
 
     <section class="container">
