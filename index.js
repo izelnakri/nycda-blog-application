@@ -3,6 +3,7 @@ const express = require('express'),
       methodOverride = require('method-override'),
       session = require('express-session'),
       displayRoutes = require('express-routemap'),
+      bcrypt = require('bcrypt'),
       logger = require('morgan');
 
 var db = require('./models');
@@ -73,12 +74,14 @@ app.post('/login', (req, res) => {
       email: req.body.email
     }
   }).then((userInDB) => {
-    if (userInDB.password === req.body.password) {
-      req.session.user = userInDB;
-      res.redirect('/');
-    } else {
-      res.redirect('/login');
-    }
+    bcrypt.compare(req.body.password, userInDB.password, (error, result) => {
+      if (result) {
+        req.session.user = userInDB;
+        res.redirect('/');
+      } else {
+        res.redirect('/login');
+      }
+    });
   }).catch(() => {
     res.redirect('/login');
   });
@@ -90,10 +93,16 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-  db.User.create(req.body).then((user) => {
-    res.redirect('/');
-  }).catch(() => {
-    res.redirect('/register');
+  var user = req.body;
+
+  bcrypt.hash(user.password, 10, (error, hash) => {
+    user.password = hash;
+
+    db.User.create(user).then((user) => {
+      res.redirect('/');
+    }).catch(() => {
+      res.redirect('/register');
+    });
   });
 });
 
