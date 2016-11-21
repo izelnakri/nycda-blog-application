@@ -1,6 +1,9 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
       methodOverride = require('method-override'),
+      session = require('express-session'),
+      displayRoutes = require('express-routemap'),
+      bcrypt = require('bcrypt'),
       logger = require('morgan');
 
 var db = require('./models');
@@ -12,6 +15,13 @@ var adminRouter = require('./routes/admin');
 app.set('view engine', 'hbs');
 
 app.use(logger('dev'));
+
+app.use(session({
+  name: 'izels-session-cookie',
+  secret: 'our secret key',
+  resave: true,
+  saveUninitialized: true
+}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -38,8 +48,55 @@ app.post('/posts/:id/comments', (req, res) => {
 });
 
 app.get('/', (req, res) => {
+  console.log(req.session);
   db.Post.findAll({ order: [['createdAt', 'DESC']] }).then((blogPosts) => {
-    res.render('index', { blogPosts: blogPosts });
+    res.render('index', { blogPosts: blogPosts, user: req.session.user });
+  });
+});
+
+app.get('/register', (req, res) => {
+  if (req.session.user) {
+    res.redirect('/admin/posts');
+  }
+
+  res.render('users/new');
+});
+
+app.get('/login', (req, res) => {
+  res.redirect('/admin');
+});
+
+app.post('/login', (req, res) => {
+  console.log(req.body);
+
+  db.User.findOne({
+    where: {
+      email: req.body.email
+    }
+  }).then((userInDB) => {
+    bcrypt.compare(req.body.password, userInDB.password, (error, result) => {
+      if (result) {
+        req.session.user = userInDB;
+        res.redirect('/');
+      } else {
+        res.redirect('/login');
+      }
+    });
+  }).catch(() => {
+    res.redirect('/login');
+  });
+});
+
+app.get('/logout', (req, res) => {
+  req.session.user = undefined;
+  res.redirect('/');
+});
+
+app.post('/users', (req, res) => {
+  db.User.create(req.body).then((user) => {
+    res.redirect('/');
+  }).catch(() => {
+    res.redirect('/register');
   });
 });
 
@@ -50,7 +107,7 @@ app.get('/:slug', (req, res) => {
     }
   }).then((post) => {
     return post.getComments().then((comments) => {
-      res.render('posts/show', { post: post, comments: comments });
+      res.render('posts/show', { post: post, comments: comments, user: req.session.user });
     });
   }).catch((error) => {
     res.status(404).end();
@@ -60,5 +117,6 @@ app.get('/:slug', (req, res) => {
 db.sequelize.sync().then(() => {
   app.listen(3000, () => {
     console.log('Web server started at port 3000!');
+    displayRoutes(app);
   });
 });
