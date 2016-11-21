@@ -161,12 +161,13 @@ app.post('/change-password/:passwordResetToken', (req, res) => {
       passwordResetToken: req.params.passwordResetToken
     }
   }).then((user) => {
-    user.password = req.params.password;
+    user.password = req.body.password;
     user.save().then((user) => {
       res.redirect('/');
     }).catch((error) => {
       res.redirect('/change-password/' + req.params.passwordResetToken);
     });
+    
   });
 });
 
