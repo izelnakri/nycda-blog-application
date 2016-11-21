@@ -10,9 +10,8 @@ module.exports = function(sequelize, DataTypes) {
     email: DataTypes.STRING,
     password: {
       type: DataTypes.VIRTUAL,
-      set: function(val) {
-        console.log('setter called on password attribute change, now it will add a password digest');
-        this.setDataValue('passwordDigest', bcrypt.hashSync(val, 10));
+      set: function(password) {
+        this.setDataValue('passwordDigest', bcrypt.hashSync(password, 10));
       }
     },
     fullName: {
@@ -21,7 +20,8 @@ module.exports = function(sequelize, DataTypes) {
         return this.getDataValue('name') + ' ' + this.getDataValue('surname');
       }
     },
-    passwordDigest: DataTypes.STRING
+    passwordDigest: DataTypes.STRING,
+    passwordResetToken: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
