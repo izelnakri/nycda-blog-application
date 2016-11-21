@@ -100,6 +100,35 @@ app.post('/users', (req, res) => {
   });
 });
 
+app.get('/forgot-password', (req, res) => {
+  res.render('forgot-password');
+});
+
+app.post('/forgot-password', (req, res) => {
+  db.User.findOne({
+    where: {
+      email: req.body.email
+    }
+  }).then((user) => {
+    if (user) {
+      // 2 - send an email with a unique link
+      res.redirect('/');
+    } else {
+      res.redirect('/forgot-password');
+    }
+  });
+});
+
+app.get('/change-password/:uuid', (req, res) => {
+  // from the uuid, we will get the user
+});
+
+app.post('/change-password/:uuid', (req, res) => {
+  // here we will get the user from uuid and then get the new password from req.body
+  // and change the password of the user to new password
+});
+
+
 app.get('/:slug', (req, res) => {
   db.Post.findOne({
     where: {
