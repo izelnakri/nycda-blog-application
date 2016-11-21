@@ -93,16 +93,10 @@ app.get('/logout', (req, res) => {
 });
 
 app.post('/users', (req, res) => {
-  var user = req.body;
-
-  bcrypt.hash(user.password, 10, (error, hash) => {
-    user.password = hash;
-
-    db.User.create(user).then((user) => {
-      res.redirect('/');
-    }).catch(() => {
-      res.redirect('/register');
-    });
+  db.User.create(req.body).then((user) => {
+    res.redirect('/');
+  }).catch(() => {
+    res.redirect('/register');
   });
 });
 
