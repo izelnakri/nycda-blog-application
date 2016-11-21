@@ -4,7 +4,14 @@ const express = require('express'),
       session = require('express-session'),
       displayRoutes = require('express-routemap'),
       bcrypt = require('bcrypt'),
+      crypto = require('crypto'),
+      base64url = require('base64url'),
+      nodemailer = require('nodemailer'),
       logger = require('morgan');
+
+var transporter = nodemailer.createTransport(
+  'smtps://nycdaamswdi%40gmail.com:' + process.env.BLOG_APP_EMAIL_PASSWORD +'@smtp.gmail.com'
+);
 
 var db = require('./models');
 
@@ -111,7 +118,26 @@ app.post('/forgot-password', (req, res) => {
     }
   }).then((user) => {
     if (user) {
-      // 2 - send an email with a unique link
+      user.passwordResetToken = base64url(crypto.randomBytes(48));
+      user.save().then((user) => {
+        transporter.sendMail({
+          to: user.email,
+          subject: 'Blog application password change request',
+          text: `
+            Hi there,
+
+            You have requested to change your password. If you haven't requested it please ignore this email.
+            You can change your password below:
+
+            http://localhost:3000/change-password/${user.passwordResetToken}
+          `
+        }, (error, info) => {
+          if (error) { throw error; }
+          console.log('Password reset email sent:');
+          console.log(info);
+        });
+      });
+
       res.redirect('/');
     } else {
       res.redirect('/forgot-password');
@@ -119,15 +145,30 @@ app.post('/forgot-password', (req, res) => {
   });
 });
 
-app.get('/change-password/:uuid', (req, res) => {
-  // from the uuid, we will get the user
+app.get('/change-password/:passwordResetToken', (req, res) => {
+  db.User.findOne({
+    where: {
+      passwordResetToken: req.params.passwordResetToken
+    }
+  }).then((user) => {
+    res.render('change-password', { user: user });
+  });
 });
 
-app.post('/change-password/:uuid', (req, res) => {
-  // here we will get the user from uuid and then get the new password from req.body
-  // and change the password of the user to new password
+app.post('/change-password/:passwordResetToken', (req, res) => {
+  db.User.findOne({
+    where: {
+      passwordResetToken: req.params.passwordResetToken
+    }
+  }).then((user) => {
+    user.password = req.params.password;
+    user.save().then((user) => {
+      res.redirect('/');
+    }).catch((error) => {
+      res.redirect('/change-password/' + req.params.passwordResetToken);
+    });
+  });
 });
-
 
 app.get('/:slug', (req, res) => {
   db.Post.findOne({

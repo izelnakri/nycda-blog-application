@@ -21,7 +21,8 @@ module.exports = function(sequelize, DataTypes) {
         return this.getDataValue('name') + ' ' + this.getDataValue('surname');
       }
     },
-    passwordDigest: DataTypes.STRING
+    passwordDigest: DataTypes.STRING,
+    passwordResetToken: DataTypes.STRING
   }, {
     classMethods: {
       associate: function(models) {
