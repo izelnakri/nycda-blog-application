@@ -4,13 +4,20 @@
 
     <hr />
 
-    <form action="/users" method="POST">
+    {{#each errors as |error|}}
+      <div class="alert alert-danger" role="alert">
+        <strong>{{error.message}}</strong>
+      </div>
+    {{/each}}
+
+
+    <form action="/register" method="POST">
       <div class="form-group">
-        <input type="email" name="email" class="form-control" required />
+        <input type="email" name="email" class="form-control" />
       </div>
 
       <div class="form-group">
-        <input type="password" name="password" class="form-control" required />
+        <input type="password" name="password" class="form-control" />
       </div>
 
       <div class="form-group text-xs-right">

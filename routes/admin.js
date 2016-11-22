@@ -49,6 +49,9 @@ router.get('/posts/:id/edit', (req, res) => {
 router.post('/posts', (req, res) => {
   db.Post.create(req.body).then((post) => {
     res.redirect('/' + post.slug);
+  }).catch((error) => {
+    console.log(error);
+    res.render('posts/new', { errors: error.errors });
   });
 });
 
