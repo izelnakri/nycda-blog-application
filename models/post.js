@@ -2,12 +2,21 @@ var slug = require('slug');
 
 module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define('Post', {
-    title: DataTypes.STRING,
-    slug: DataTypes.STRING,
-    content: DataTypes.TEXT
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    slug: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
+    content: {
+      type: DataTypes.TEXT,
+      allowNull: false
+    }
   }, {
     hooks: {
-      beforeCreate: function(post, options) {
+      beforeValidate: function(post, options) {
         if (!post.slug) {
           post.slug = slug(post.title, { lower: true });
         }
