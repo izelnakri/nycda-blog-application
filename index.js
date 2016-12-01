@@ -72,8 +72,8 @@ app.get('/:slug', (req, res) => {
 });
 
 db.sequelize.sync().then(() => {
-  app.listen(3000, () => {
-    console.log('Web server started at port 3000!');
+  app.listen(3001, () => {
+    console.log('Web server started at port 3001!');
     displayRoutes(app);
   });
 });
