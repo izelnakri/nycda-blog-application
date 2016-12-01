@@ -1,7 +1,9 @@
-var assert = require('assert');
-var db = require('../models');
+process.env.NODE_ENV = 'test';
 
-describe('Post Model', () => {
+const assert = require('assert'),
+      db = require('../models');
+
+describe('MODEL: POST', () => {
   before((done) => {
     db.sequelize.sync({ force: true }).then(() => {
       done();
