@@ -4,6 +4,12 @@
 
     <hr />
 
+    {{#if error}}
+      <div class="alert alert-danger" role="alert">
+        <strong>{{error.message}}</strong>
+      </div>
+    {{/if}}
+
     <form action="/login" method="POST">
       <div class="form-group">
         <input type="email" name="email" class="form-control" required />

@@ -1,3 +1,9 @@
+{{#each errors as |error|}}
+  <div class="alert alert-danger" role="alert">
+    <strong>{{error.message}}</strong>
+  </div>
+{{/each}}
+
 <form action="/admin/posts" method="POST">
   <div class="form-group">
     <label>Post Title:</label>

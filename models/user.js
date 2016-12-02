@@ -7,9 +7,34 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.STRING
     },
     surname: DataTypes.STRING,
-    email: DataTypes.STRING,
+    email: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          msg: 'Email cannot be empty'
+        },
+        isEmail: {
+          msg: 'Email must be a valid email format'
+        },
+        lengthMatcher: function(value) {
+          if (value.length < 2 || value.length > 100) {
+            throw new Error('Email must be between 2 to 100 characters');
+          }
+        }
+      }
+    },
     password: {
       type: DataTypes.VIRTUAL,
+      validate: {
+        notEmpty: {
+          msg: 'Password cannot be empty'
+        },
+        passwordLenghtChecker: function(value) {
+          if (value.length < 5 || value.length > 40) {
+            throw new Error('Password must be between 5 to 40 characters');
+          }
+        }
+      },
       set: function(password) {
         this.setDataValue('passwordDigest', bcrypt.hashSync(password, 10));
       }
