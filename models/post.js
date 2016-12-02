@@ -12,7 +12,14 @@ module.exports = function(sequelize, DataTypes) {
     },
     content: {
       type: DataTypes.TEXT,
-      allowNull: false
+      allowNull: false,
+      validate: {
+        lengthValidator: function(content) {
+          if (content.length < 15) {
+            throw new Error('Post content is too short');
+          }
+        }
+      },
     }
   }, {
     hooks: {
@@ -26,6 +33,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         this.hasMany(models.Comment);
+        this.belongsTo(models.User);
       }
     }
   });
