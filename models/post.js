@@ -20,6 +20,14 @@ module.exports = function(sequelize, DataTypes) {
           }
         }
       },
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
     }
   }, {
     hooks: {

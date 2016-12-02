@@ -10,7 +10,7 @@ module.exports = {
         key: 'id'
       }
     });
-
+    
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.
