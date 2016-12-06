@@ -1,11 +1,14 @@
 const express = require('express'),
+      hbs = require('hbs'),
       bodyParser = require('body-parser'),
+      compression = require('compression'),
       methodOverride = require('method-override'),
       session = require('express-session'),
       displayRoutes = require('express-routemap'),
       logger = require('morgan');
 
-var db = require('./models');
+var db = require('./models'),
+    assets = require('./config/assets.json');
 
 var app = express();
 
@@ -15,7 +18,17 @@ const adminRouter = require('./routes/admin'),
 
 app.set('view engine', 'hbs');
 
+hbs.registerHelper('assets', function(asset) {
+  return assets[asset];
+});
+
+app.use(compression());
+
 app.use(logger('dev'));
+
+app.use(express.static('public', {
+  maxAge: '1y'
+}));
 
 app.use(session({
   name: 'izels-session-cookie',
@@ -51,7 +64,6 @@ app.post('/posts/:id/comments', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  console.log(req.session);
   db.Post.findAll({ order: [['createdAt', 'DESC']] }).then((blogPosts) => {
     res.render('index', { blogPosts: blogPosts, user: req.session.user });
   });
@@ -72,8 +84,8 @@ app.get('/:slug', (req, res) => {
 });
 
 db.sequelize.sync().then(() => {
-  app.listen(3000, () => {
-    console.log('Web server started at port 3000!');
+  app.listen(3001, () => {
+    console.log('Web server started at port 3001!');
     displayRoutes(app);
   });
 });

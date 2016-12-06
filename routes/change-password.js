@@ -11,7 +11,7 @@ var transporter = nodemailer.createTransport(
 );
 
 router.get('/forgot-password', (req, res) => {
-  res.render('forgot-password');
+  res.render('authentication/forgot-password');
 });
 
 router.post('/forgot-password', (req, res) => {
@@ -54,7 +54,7 @@ router.get('/change-password/:passwordResetToken', (req, res) => {
       passwordResetToken: req.params.passwordResetToken
     }
   }).then((user) => {
-    res.render('change-password', { user: user });
+    res.render('authentication/change-password', { user: user });
   });
 });
 

@@ -4,36 +4,34 @@ module.exports = function(sequelize, DataTypes) {
   var Post = sequelize.define('Post', {
     title: {
       type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          msg: 'Post title cannot be empty'
-        }
-      }
+      allowNull: false
     },
     slug: {
       type: DataTypes.STRING,
-      validate: {
-        notEmpty: {
-          msg: 'Post slug cannot be empty'
-        }
-      }
+      allowNull: false
     },
     content: {
       type: DataTypes.TEXT,
+      allowNull: false,
       validate: {
-        notEmpty: {
-          msg: 'Post content cannot be empty'
-        },
         lengthValidator: function(content) {
           if (content.length < 15) {
             throw new Error('Post content is too short');
           }
         }
       },
+    },
+    UserId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'Users',
+        key: 'id'
+      }
     }
   }, {
     hooks: {
-      beforeCreate: function(post, options) {
+      beforeValidate: function(post, options) {
         if (!post.slug) {
           post.slug = slug(post.title, { lower: true });
         }
@@ -43,6 +41,7 @@ module.exports = function(sequelize, DataTypes) {
       associate: function(models) {
         // associations can be defined here
         this.hasMany(models.Comment);
+        this.belongsTo(models.User);
       }
     }
   });

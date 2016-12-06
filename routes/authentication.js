@@ -8,7 +8,7 @@ router.get('/register', (req, res) => {
     res.redirect('/admin/posts');
   }
 
-  res.render('users/new');
+  res.render('authentication/register');
 });
 
 router.post('/register', (req, res) => {
@@ -16,12 +16,12 @@ router.post('/register', (req, res) => {
     req.session.user = user;
     res.redirect('/');
   }).catch((error) => {
-    res.render('users/new', { errors: error.errors });
+    res.render('authentication/register', { errors: error.errors });
   });
 });
 
 router.get('/login', (req, res) => {
-  res.render('login');
+  res.render('authentication/login');
 });
 
 router.post('/login', (req, res) => {
@@ -35,11 +35,11 @@ router.post('/login', (req, res) => {
         req.session.user = userInDB;
         res.redirect('/');
       } else {
-        res.render('login', { error: { message: 'Password is incorrect' } });
+        res.render('authentication/login', { error: { message: 'Password is incorrect' } });
       }
     });
   }).catch((error) => {
-    res.render('login', { error: { message: 'User not found in the database' } });
+    res.render('authentication/login', { error: { message: 'User not found in the database' } });
   });
 });
 
